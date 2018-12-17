@@ -7,10 +7,6 @@ solution_1() ->
   Result = lists:foldl(fun sum/2, 0, Integers),
   Result.
 
-to_int(String) -> 
-  {Int, _} = string:to_integer(String),
-  Int.
-
 readlines(FileName) ->
   {ok, Device} = file:open(FileName, [read]),
   try get_all_lines(Device)
@@ -22,6 +18,10 @@ get_all_lines(Device) ->
       eof  -> [];
       {ok, Line} -> [Line] ++ get_all_lines(Device)
   end.
+
+to_int(String) -> 
+  {Int, _} = string:to_integer(String),
+  Int.
 
 sum(X, Y) ->
   X + Y.

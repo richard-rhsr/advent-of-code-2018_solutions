@@ -1,8 +1,6 @@
 -module(main).
 -include_lib("stdlib/include/assert.hrl").
-% -export([solution_1/0]).
 -export([solution_1/0, solution_2/0]).
-% -export([solution_1/0, readlines/1, parse_claim/1, superpose/2]).
 -record(claim, {left, right, top, bottom, area, id}).
 -define(SIZE, 1000).
 

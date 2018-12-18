@@ -67,8 +67,6 @@ solution_2() ->
   Init = init2(Claims),
   {_Fabric, Intact} = lists:foldl(fun superpose2/2, Init, Claims),
   lists:flatmap(fun erlang:integer_to_list/1, sets:to_list(Intact)).
-  % OverUsedCells = maps:filter(fun is_within_2_or_more_claims/2, FabricWithClaims),
-  % maps:size(OverUsedCells).
 
 init2(Claims) ->
   Entries = lists:map(fun id/1, Claims),

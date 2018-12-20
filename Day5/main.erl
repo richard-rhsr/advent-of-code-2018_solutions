@@ -1,5 +1,19 @@
 -module(main).
--export([solution_1/0, solution_2/0, solve/1, solve_slow/1, input/0, test_input/0]).
+-export([solution_1/0, solution_2/0 
+, solve/1, solve_slow/1, solve_complicated/1
+, input/0, test_input/0
+, print_tree/1, print_iter/1
+]).
+
+solution_1() ->
+  Input = input(),
+  solve(Input).
+
+solution_2() ->
+  Polymer = input(),
+  ImprovedAttempts = improved_variants(Polymer),
+  ImprovedInertLengths = lists:map(fun solve/1, ImprovedAttempts),
+  lists:min(ImprovedInertLengths).
 
 input() -> 
   [Line] = readlines('input.txt'),
@@ -8,10 +22,6 @@ input() ->
 test_input() -> 
   [Line] = readlines('input2.txt'),
   Line.
-
-solution_1() ->
-  Input = input(),
-  solve(Input).
 
 readlines(FileName) ->
   {ok, Device} = file:open(FileName, [read]),
@@ -25,12 +35,12 @@ get_all_lines(Device) ->
       {ok, Line} -> [Line] ++ get_all_lines(Device)
   end.
 
-solution_2() ->
-  Input = input(),
-  Types = sets:to_list(sets:from_list(lists:map(fun (C) -> string:to_lower(C) end, Input))),
-  ImprovedAttempts = lists:map(fun (C) -> remove_type(Input, C) end, Types),
-  ImprovedInertLengths = lists:map(fun solve/1, ImprovedAttempts),
-  lists:min(ImprovedInertLengths).
+improved_variants(Polymer) ->
+  Types = get_types(Polymer),
+  lists:map(fun (C) -> remove_type(Polymer, C) end, Types).
+
+get_types(Polymer) ->
+  sets:to_list(sets:from_list(lists:map(fun (C) -> string:to_lower(C) end, Polymer))).
 
 remove_type(Polymer, Char) ->
   Lower = string:to_lower(Char),
@@ -38,7 +48,22 @@ remove_type(Polymer, Char) ->
   Without = string:lexemes(Polymer, [Lower, Upper]),
   lists:flatten(Without).
 
-solve(Polymer) ->
+solve(Polymer) -> length(fully_react([], Polymer)).
+
+fully_react(Past, []) -> Past; % string:reverse(Past);
+fully_react([], [First | Rest]) -> fully_react([First], Rest);
+fully_react([First | T1] = Past, [Second | T2]) ->
+  case can_react(First, Second) of
+    true -> fully_react(T1, T2);
+    false -> fully_react([Second | Past], T2)
+  end.
+
+can_react(First, Second) ->
+  Case1 = string:to_lower(First) == Second andalso string:to_upper(Second) == First,
+  Case2 = string:to_upper(First) == Second andalso string:to_lower(Second) == First,
+  Case1 orelse Case2.
+
+solve_complicated(Polymer) ->
   Inert = fully_react(Polymer),
   length(Inert).
 

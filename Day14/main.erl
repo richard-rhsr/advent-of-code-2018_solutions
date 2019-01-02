@@ -100,8 +100,9 @@ check_pattern_last_N(Pattern, {Recipes, Size}, N) ->
   
 check_pattern(_, _, {First, _}) when First < 0 -> false;
 check_pattern(Pattern, Array, {First, Last}) ->
-  Candidate = lists:map(fun (I) -> array:get(I, Array) end, lists:seq(First, Last)),
-  Candidate == Pattern.
+  Indexes = lists:seq(First, Last),
+  Pairs = lists:zip(Indexes, Pattern),
+  lists:all(fun ({I,Score}) -> array:get(I, Array) == Score end, Pairs).
 
 print_state({Array, _}, [I0, I1]) ->
   OrdDict = array:sparse_to_orddict(Array),
